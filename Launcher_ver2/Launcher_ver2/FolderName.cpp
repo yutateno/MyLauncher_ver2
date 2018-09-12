@@ -1,8 +1,9 @@
-#include "FolderName.h"
+#include "FolderName.hpp"
 
 using namespace std;
 
 namespace pb = projectbase;
+
 
 string FolderName::SearchMediaFile(string gamePath, string gamefilename, string extension)
 {
@@ -30,26 +31,28 @@ string FolderName::SearchMediaFile(string gamePath, string gamefilename, string 
 	return media_filename;		// 調べたい拡張子を持つファイルの名前を返す
 }
 
-void FolderName::SearchDrawFile(string gamePath, string gamefilename, string extension, int nowlist)
+
+void FolderName::SearchDrawFile(string gamePath, string gamefilename, string extension)
 {
-	// 拡張子を持つファイルの名前を調べる
-	gamePath.operator+= (gamefilename);
-	gamePath.operator+= ("\\");
-	gamePath.operator+= ("launcher");
-	gamePath.operator+= ("\\");
-	gamePath.operator+= ("*.");
-	gamePath.operator+= (extension);
+	//// 拡張子を持つファイルの名前を調べる
+	//gamePath.operator+= (gamefilename);
+	//gamePath.operator+= ("\\");
+	//gamePath.operator+= ("launcher");
+	//gamePath.operator+= ("\\");
+	//gamePath.operator+= ("*.");
+	//gamePath.operator+= (extension);
 
-	hFind = FindFirstFile(gamePath.c_str(), &FindFileData);
-	if (hFind != INVALID_HANDLE_VALUE)
-	{
-		do {
-			drawname[nowlist].push_back(FindFileData.cFileName);
-		} while (FindNextFile(hFind, &FindFileData));
+	//hFind = FindFirstFile(gamePath.c_str(), &FindFileData);
+	//if (hFind != INVALID_HANDLE_VALUE)
+	//{
+	//	do {
+	//		drawname.push_back(FindFileData.cFileName);
+	//	} while (FindNextFile(hFind, &FindFileData));
 
-		FindClose(hFind);
-	}
+	//	FindClose(hFind);
+	//}
 }
+
 
 void FolderName::SearchGameFile(string gamePath)
 {
@@ -72,6 +75,7 @@ void FolderName::SearchGameFile(string gamePath)
 		FindClose(hFind);
 	}
 }
+
 
 FolderName::FolderName()
 {
@@ -102,29 +106,22 @@ FolderName::FolderName()
 
 	createPath = tempPath;
 
-	drawname.resize(gamenum);		// ゲームの数だけ事前に確保する
-
 	for (int i = 0; i != gamenum; ++i)
 	{
 		// 動画のファイル名を保存
 		moviename.push_back(SearchMediaFile(gamePath, foldername[i], "mp4"));	// mp4以外だと何があるかわかんないからとりあえずこれだけ
 
 		// 画像のファイル名を保存
-		// pngを調べる
-		SearchDrawFile(gamePath, foldername[i], "png", i);
-		// 予定枚数に足らない場合はjpgを調べる
-		if (drawname[i].size() != pb::DRAW_MEDIA_NUM)
-		{
-			SearchDrawFile(gamePath, foldername[i], "jpg", i);
-		}
+		drawname.push_back(SearchMediaFile(gamePath, foldername[i], "png"));
 
 		// テキストデータのファイル名を保存
 		textname.push_back(SearchMediaFile(gamePath, foldername[i], "txt"));
 	}
 }
 
+
 FolderName::~FolderName()
-{	
+{
 	foldername.clear();
 	foldername.shrink_to_fit();
 
@@ -138,15 +135,18 @@ FolderName::~FolderName()
 	textname.shrink_to_fit();
 }
 
+
 int FolderName::GetGameNum()
 {
 	return gamenum;
 }
 
+
 string FolderName::GetPathName()
 {
 	return createPath;
 }
+
 
 string FolderName::GetFolderName(int catch_number)
 {
@@ -158,15 +158,18 @@ vector<string> FolderName::GetGameListName()
 	return foldername;
 }
 
+
 vector<string> FolderName::GetMovieListName()
 {
 	return moviename;
 }
 
-vector<vector<string>> FolderName::GetDrawListName()
+
+vector<string> FolderName::GetDrawListName()
 {
 	return drawname;
 }
+
 
 vector<string> FolderName::GetTextListName()
 {

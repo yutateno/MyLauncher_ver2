@@ -1,4 +1,4 @@
-#include "FolderInGame.h"
+#include "FolderInGame.hpp"
 
 void FolderInGame::Process(std::string createPath, std::string folderName)
 {

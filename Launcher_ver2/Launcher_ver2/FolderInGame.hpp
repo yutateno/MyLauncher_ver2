@@ -1,5 +1,5 @@
 #pragma once
-#include "ProjectBase.h"
+#include "ProjectBase.hpp"
 
 class FolderInGame
 {
@@ -14,7 +14,7 @@ public:
 	~FolderInGame() {}	// デストラクタ
 
 	void Process(std::string createPath, std::string folderName);		// メイン/ exeの階層までのパスを保存した引数とexeの名前を保存した引数
-	
+
 	// ゲッター
 	bool GetbResult();		// 起動を確認
 };
