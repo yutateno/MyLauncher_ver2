@@ -12,10 +12,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	int default_ySize;		// デフォルトウィンドウのYサイズ
 	int bitcolor;			// デフォルトウィンドウのビットカラー値
 
-	bool endFlag = false;				// エンドコマンドを入力されたかどうか
-	bool endComfirm = false;			// エンドの確認
-
-	int fontSize = 16;			// フォントサイズ
+	int fontSize = 48;			// フォントサイズ
 
 	int colorSelect = GetColor(0, 0, 0);		// 黒
 
@@ -55,67 +52,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && !game_list->GetLauncherEnd())
 	{
-		// 終了コマンドを入力してフラッグを立たせる
-		if (!KeyData::CheckEnd())	// 終了はキーボードのみ
-		{
-			endFlag = true;
-		}
-
 		// 終了フラッグが立っていないとき
-		if (!endFlag)
-		{
-			game_list->Draw();		// ここのみ描画
+		game_list->Draw();		// ここのみ描画
 
-			game_list->Process();		// ランチャー内の動作
+		game_list->Process();		// ランチャー内の動作
 
-			// ゲームが起動していないとき
-			if (!game_list->GetCreateGame())
-			{
-				KeyData::UpDate();
-				PadData::UpDate();
-				MouseData::Mouse_UpDate();
-				MouseWheelData::MouseWheel_Update();
-				game_list->KeyProcess();
-			}
-		}
-		else
+		// ゲームが起動していないとき
+		if (!game_list->GetCreateGame())
 		{
 			KeyData::UpDate();
 			PadData::UpDate();
-			DrawFormatString(860, 520, GetColor(255, 255, 255), "Shut Down？\nNO     YES\n		push ENTER");
-
-			// 上の文字のNOとYESの切り替え
-			if (KeyData::Get(KEY_INPUT_LEFT) == 1)
-			{
-				endComfirm = false;
-			}
-			if (KeyData::Get(KEY_INPUT_RIGHT) == 1)
-			{
-				endComfirm = true;
-			}
-
-			// 選択状況に応じて色を変える
-			if (endComfirm)
-			{
-				DrawFormatString(860, 520, GetColor(255, 0, 0), "\n       YES");
-			}
-			else
-			{
-				DrawFormatString(860, 520, GetColor(255, 0, 0), "\nNO");
-			}
-
-			// エンターキーを押して選択状況に応じて
-			if (KeyData::Get(KEY_INPUT_NUMPADENTER) == 1)
-			{
-				if (endComfirm)
-				{
-					break;
-				}
-				else
-				{
-					endFlag = false;
-				}
-			}
+			MouseData::Mouse_UpDate();
+			MouseWheelData::MouseWheel_Update();
 		}
 	}
 

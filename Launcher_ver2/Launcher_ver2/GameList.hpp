@@ -99,6 +99,35 @@ private:
 	int drawGameReady[4];
 
 
+	int optionPerformerCount;
+
+
+	void DrawGameFileScroll();
+
+
+	void DrawOption();
+
+
+	int scrollNum;
+
+	int selectSideNum;
+
+
+	bool endFlag;				// エンドコマンドを入力されたかどうか
+
+
+	bool endComfirm;			// エンドの確認
+
+
+	void LauncherEnd();
+
+
+	void KeyProcess();	// 入力
+
+
+	int drawLauncherEnd[4];
+
+	bool endOrOption;
 
 public:
 	GameList(int defaultXSize, int defaultYSize);		// コンストラクタ
@@ -107,10 +136,10 @@ public:
 
 	void Draw();		// 描画
 	void Process();		// メイン
-	void KeyProcess();	// 入力
 
 
 	// ゲッター
 	bool GetCreateGame();		// ゲームの起動
 	bool GetLauncherEnd();		// ランチャーの終了
+	bool GetEndFlag();
 };
