@@ -12,35 +12,46 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	int default_ySize;		// デフォルトウィンドウのYサイズ
 	int bitcolor;			// デフォルトウィンドウのビットカラー値
 
+
 	int fontSize = 48;			// フォントサイズ
 
-	int colorSelect = GetColor(0, 0, 0);		// 黒
 
 	SetWindowText("My_Launcher");	// メインウインドウのウインドウタイトルを変更する
 
+
 	GetDefaultState(&default_xSize, &default_ySize, &bitcolor);		// ウィンドウデフォルト値を得る
 
+
 	ChangeWindowMode(TRUE);			// ウィンドウズモードにさせるかどうか
+
 
 	SetGraphMode(projectbase::WINDOW_X, projectbase::WINDOW_Y, bitcolor);					// 画像に合わせて画面サイズを変更
 	SetWindowSize(default_xSize, default_ySize);		// ウィンドウサイズに合わせてゲームサイズを変更
 
-	SetBackgroundColor(220, 220, 220);
+
+	SetBackgroundColor(220, 220, 220);			// 背景色
+
 
 	if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
 	{
-		return -1;			// エラーが起きたら直ちに終了
+		return -1;				// エラーが起きたら直ちに終了
 	}
 
-	SetAlwaysRunFlag(TRUE);
+
+	SetAlwaysRunFlag(TRUE);					// 裏画面でも動作
+
 
 	SetDrawScreen(DX_SCREEN_BACK);	// 背景描画
 
+
 	SetFontSize(fontSize);				// フォントサイズ
+
 
 	SetMouseDispFlag(TRUE);			// マウスを表示
 
+
 	GameList* game_list = new GameList(default_xSize, default_ySize);		// ランチャーのメイン
+
 
 	// 操作
 	KeyData::UpDate();
@@ -50,12 +61,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MouseData::Mouse_UpDate();
 	MouseWheelData::MouseWheel_Update();
 
+
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && !game_list->GetLauncherEnd())
 	{
-		// 終了フラッグが立っていないとき
 		game_list->Draw();		// ここのみ描画
 
+
 		game_list->Process();		// ランチャー内の動作
+
 
 		// ゲームが起動していないとき
 		if (!game_list->GetCreateGame())
@@ -67,11 +80,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
+
 	delete game_list;
+
 
 	DxLib::InitGraph();
 	DxLib::InitSoundMem();
 	DxLib::DxLib_End();
+
 
 	return 0;
 }

@@ -11,24 +11,6 @@ private:
 	FolderInGame* p_folder_game;		// FolderInGameの実態(フォルダのゲームの起動に関する)
 	FolderInMedia* p_folder_media;	// FolderInMediaの実態(フォルダのゲームのメディアに関する)
 
-	int gamenum;			// ゲームを所有する個数
-
-	int now_checkgame;		// 今見ているゲーム
-
-	int gameReadyWait;		// 同じコマンドを押させたい
-
-	int fontData;			// 作成するフォントデータ
-
-	bool gameReady;			// ゲーム起動の確認
-
-	bool gameReadyCheck;	// ゲーム起動の選択
-
-	bool createGameFlag;	// ゲームを起動しているか
-
-	bool launcher_end;		// ランチャーを終了させる
-
-	void GameUpdate(int right, int left, int dicision);
-
 
 	// 変えれるウィンドウのサイズ(XとY両方持つ奴欲しかった)(本当はenumの数値にX座標入れてfor回したかったけど出来ないから妥協)
 	struct SizeWindow {
@@ -77,57 +59,61 @@ private:
 		}
 	};
 
-	int default_xSize;		// デフォルトウィンドウのXサイズ
-	int default_ySize;		// デフォルトウィンドウのYサイズ
 
-	int numSize;
-	int xSize;			// サイズ変更後のXサイズ
-	int ySize;			// サイズ変更後のYサイズ
-
-	bool gameSelect;
+	// 画像を保存する変数
+	int drawWindow[10];		// ウィンドウサイズに関する画像
+	int drawSelectWin;		// ウィンドウサイズの決定に関する画像
+	int drawGameReady[4];	// ゲーム起動に関する画像
+	int drawLauncherEnd[4];		// ランチャーの終了に関する画像
 
 
-	int drawWindow[10];
-
-	int drawSelectWin;
-
-	bool windowSizeMenuFlag;	// ウィンドウサイズ変更メニューの表示フラッグ
-
-
-	int optionTextFor;		// forループ数値のためのもの
-
-	int drawGameReady[4];
+	// ゲーム一覧に関する
+	int gamenum;			// 遊べるゲームの数
+	int now_checkgame;		// 今見ているゲーム
+	int scrollNum;			// ゲームの列の数
+	int selectSideNum;		// 今選択しているゲームの列
 
 
-	int optionPerformerCount;
+	// 操作の補助
+	int doubleSelectWait;		// ダブルクリックをさせない(最大4つのコントローラーとキーボードの操作を同時に取得しているので二つ以上の媒体で同時に押したときに動作をさせないため)
+	
+	
+	// ゲームの起動に関する
+	bool gameReady;			// ゲーム起動の確認
+	bool gameReadyCheck;	// ゲーム起動の選択
+	bool createGameFlag;	// ゲームを起動しているか
 
 
-	void DrawGameFileScroll();
-
-
-	void DrawOption();
-
-
-	int scrollNum;
-
-	int selectSideNum;
-
-
+	// ランチャー終了に関する
+	bool launcher_end;			// ランチャーを終了させる
 	bool endFlag;				// エンドコマンドを入力されたかどうか
-
-
 	bool endComfirm;			// エンドの確認
+	bool endOrOption;			// ランチャー終了コマンドかオプションコマンドにカーソルを当てているか
 
 
-	void LauncherEnd();
+	// ウィンドウサイズ変更に関する
+	int default_xSize;			// デフォルトウィンドウのXサイズ
+	int default_ySize;			// デフォルトウィンドウのYサイズ
+	int numSize;				// 今のサイズ
+	int xSize;					// サイズ変更後のXサイズ
+	int ySize;					// サイズ変更後のYサイズ
+	bool gameSelect;			// ゲームを選択している(上のオプションではない)
+	bool windowSizeMenuFlag;	// ウィンドウサイズ変更メニューの表示フラッグ
+	int optionTextFor;			// ウィンドウサイズのforループ数値のためのもの
+	int optionPerformerCount;	// ウィンドウサイズオプションの演出用変数
+
+	
+
+	// 描画のプロセス
+	void DrawGameFileScroll();		// ゲーム起動に関する描画
+	void DrawOption();				// オプションに関する描画
 
 
-	void KeyProcess();	// 入力
-
-
-	int drawLauncherEnd[4];
-
-	bool endOrOption;
+	// 操作のプロセス
+	void KeyProcess();																	// 入力
+	void OptionKeyProcess(int right, int left, int up, int down, int dicision);			// オプションの操作に関する
+	void GameUpdate(int right, int left, int dicision);									// ゲーム起動の操作に関する
+	void LauncherEnd(int left, int right, int dicision);								// ランチャー終了の操作に関する
 
 public:
 	GameList(int defaultXSize, int defaultYSize);		// コンストラクタ
@@ -141,5 +127,4 @@ public:
 	// ゲッター
 	bool GetCreateGame();		// ゲームの起動
 	bool GetLauncherEnd();		// ランチャーの終了
-	bool GetEndFlag();
 };
