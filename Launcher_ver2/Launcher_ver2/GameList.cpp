@@ -293,7 +293,7 @@ void GameList::OptionKeyProcess(int right, int left, int up, int down, int dicis
 	{
 		gameSelect = true;
 	}
-	if (!gameSelect)
+	if (!gameSelect && !windowSizeMenuFlag)
 	{
 		if (right == 1)
 		{

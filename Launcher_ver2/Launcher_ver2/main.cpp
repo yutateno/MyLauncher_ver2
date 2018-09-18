@@ -29,7 +29,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetWindowSize(default_xSize, default_ySize);		// ウィンドウサイズに合わせてゲームサイズを変更
 
 
-	SetBackgroundColor(220, 220, 220);			// 背景色
+	SetBackgroundColor(230, 230, 230);			// 背景色
 
 
 	if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
