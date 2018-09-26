@@ -21,3 +21,7 @@ namespace projectbase
 #define POINTER_RELEASE(p) { if(p!=NULL) {delete (p); (p)=NULL; } }
 #define GRAPH_RELEASE(p) { if(p!=-1) {DeleteGraph(p); (p)=0; } }
 #define VECTOR_RELEASE(p) { p.clear(); p.shrink_to_fit(); }
+
+
+// debugÉ}ÉNÉç
+// #define DEBUG_PRINTFDX;

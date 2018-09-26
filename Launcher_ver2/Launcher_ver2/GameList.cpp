@@ -507,6 +507,11 @@ void GameList::Draw()
 			DrawBox(900, 720, 1233, 783, 255, false);
 		}
 	}
+
+#ifdef DEBUG_PRINTFDX
+	printfDx("%d\n", endFlag);
+#endif // DEBUG_PRINTFDX
+
 }
 
 
