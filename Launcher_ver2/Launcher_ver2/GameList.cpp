@@ -442,30 +442,22 @@ GameList::GameList(int defaultXSize, int defaultYSize)
 
 GameList::~GameList()
 {
-	if (p_folder_name != NULL)
+	POINTER_RELEASE(p_folder_name);
+	POINTER_RELEASE(p_folder_game);
+	POINTER_RELEASE(p_folder_media);
+
+	for (int i = 0; i != 4; ++i)
 	{
-		delete p_folder_name;
-	}
-	if (p_folder_game != NULL)
-	{
-		delete p_folder_game;
-	}
-	if (p_folder_media != NULL)
-	{
-		delete p_folder_media;
+		GRAPH_RELEASE(drawLauncherEnd[i]);
 	}
 	for (int i = 0; i != 4; ++i)
 	{
-		DeleteGraph(drawLauncherEnd[i]);
+		GRAPH_RELEASE(drawGameReady[i]);
 	}
-	for (int i = 0; i != 4; ++i)
-	{
-		DeleteGraph(drawGameReady[i]);
-	}
-	DeleteGraph(drawSelectWin);
+	GRAPH_RELEASE(drawSelectWin);
 	for (int i = 0; i != 10; ++i)
 	{
-		DeleteGraph(drawWindow[i]);
+		GRAPH_RELEASE(drawWindow[i]);
 	}
 }
 

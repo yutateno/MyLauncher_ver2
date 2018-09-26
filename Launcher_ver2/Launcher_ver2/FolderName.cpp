@@ -122,17 +122,10 @@ FolderName::FolderName()
 
 FolderName::~FolderName()
 {
-	foldername.clear();
-	foldername.shrink_to_fit();
-
-	moviename.clear();
-	moviename.shrink_to_fit();
-
-	drawname.clear();
-	drawname.shrink_to_fit();
-
-	textname.clear();
-	textname.shrink_to_fit();
+	VECTOR_RELEASE(foldername);
+	VECTOR_RELEASE(moviename);
+	VECTOR_RELEASE(drawname);
+	VECTOR_RELEASE(textname);
 }
 
 

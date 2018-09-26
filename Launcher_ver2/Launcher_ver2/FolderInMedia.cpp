@@ -90,16 +90,11 @@ FolderInMedia::FolderInMedia(string pathname, vector<string> gamename, vector<st
 
 FolderInMedia::~FolderInMedia()
 {
-	d_draw.clear();
-	d_draw.shrink_to_fit();
+	VECTOR_RELEASE(d_draw);
+	VECTOR_RELEASE(d_movie);
+	VECTOR_RELEASE(d_text);
 
-	d_movie.clear();
-	d_movie.shrink_to_fit();
-
-	d_text.clear();
-	d_text.shrink_to_fit();
-
-	DeleteGraph(nonedata);
+	GRAPH_RELEASE(nonedata);
 }
 
 int FolderInMedia::GetMovie(int listnum)

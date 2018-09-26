@@ -9,7 +9,7 @@ void FolderInGame::Process(std::string createPath, std::string folderName)
 	STARTUPINFO sInfo = {};			// 初期プロセス起動のためのもの(こっちだけローカルじゃなくていいかも)
 
 	//STARTUPINFO 構造体の内容を取得
-	ZeroMemory(&sInfo, sizeof(sInfo));		// 完全に初期化する
+	ZeroMemory(&sInfo, sizeof(sInfo));		// 構造体全部初期化する
 	sInfo.cb = sizeof(sInfo);
 
 	GetStartupInfo(&sInfo);					// スタートアップ情報を得る

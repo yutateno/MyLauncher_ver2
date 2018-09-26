@@ -81,7 +81,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 
-	delete game_list;
+	POINTER_RELEASE(game_list);
 
 
 	DxLib::InitGraph();
