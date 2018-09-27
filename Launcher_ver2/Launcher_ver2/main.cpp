@@ -8,9 +8,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetOutApplicationLogValidFlag(FALSE);	// ログテキスト出力しない
 #endif
 
-	int default_xSize;		// デフォルトウィンドウのXサイズ
-	int default_ySize;		// デフォルトウィンドウのYサイズ
-	int bitcolor;			// デフォルトウィンドウのビットカラー値
+	int default_xSize = 1920;		// デフォルトウィンドウのXサイズ
+	int default_ySize = 1080;		// デフォルトウィンドウのYサイズ
+	int bitcolor = 32;				// デフォルトウィンドウのビットカラー値
 
 
 	int fontSize = 48;			// フォントサイズ
@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ChangeWindowMode(TRUE);			// ウィンドウズモードにさせるかどうか
 
 
-	SetGraphMode(projectbase::WINDOW_X, projectbase::WINDOW_Y, bitcolor);					// 画像に合わせて画面サイズを変更
+	SetGraphMode(1920, 1080, bitcolor);					// 画像に合わせて画面サイズを変更
 	SetWindowSize(default_xSize, default_ySize);		// ウィンドウサイズに合わせてゲームサイズを変更
 
 
@@ -50,7 +50,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetMouseDispFlag(TRUE);			// マウスを表示
 
 
-	GameList* game_list = new GameList(default_xSize, default_ySize);		// ランチャーのメイン
+	GameList* game_list = NULL;
+	game_list = new GameList(default_xSize, default_ySize);		// ランチャーのメイン
 
 
 	// 操作

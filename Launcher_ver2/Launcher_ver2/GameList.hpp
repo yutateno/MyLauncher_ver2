@@ -7,6 +7,7 @@
 class GameList
 {
 private:
+	// ポインターたち
 	FolderName* p_folder_name;		// FolderNameの実態(ゲームを所持するフォルダの名前を持つ)
 	FolderInGame* p_folder_game;		// FolderInGameの実態(フォルダのゲームの起動に関する)
 	FolderInMedia* p_folder_media;	// FolderInMediaの実態(フォルダのゲームのメディアに関する)
@@ -71,10 +72,6 @@ private:
 	int gameNum;			// 遊べるゲームの数
 	int now_checkGame;		// 今見ているゲーム
 	int selectSideNum;		// 今選択しているゲームの列
-
-
-	// 操作の補助
-	//int doubleSelectWait;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
 	
 	
 	// ゲームの起動に関する

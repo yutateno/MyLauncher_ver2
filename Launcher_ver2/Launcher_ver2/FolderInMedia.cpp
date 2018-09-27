@@ -1,11 +1,10 @@
 #include "FolderInMedia.hpp"
 
 using namespace std;
-namespace pb = projectbase;
 
 string FolderInMedia::ReadText(string textname)
 {
-	string L_Line;				// 読み込んだ行（1行）
+	string L_Line = "";				// 読み込んだ行（1行）
 	ifstream L_File;			// 読み込むファイル
 	string textdata = "";	// 返り値
 
@@ -16,7 +15,7 @@ string FolderInMedia::ReadText(string textname)
 	// ファイル読み込み失敗
 	if (L_File.fail())
 	{
-		//textdata.resize(1);
+		textdata.resize(1);
 		textdata =  "テキストデータなし";
 	}
 	else

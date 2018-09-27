@@ -1,77 +1,9 @@
 #include "GameList.hpp"
 
 namespace ps = padstick;
-using namespace projectbase;
 
 
-// ゲーム起動の操作に関する
-void GameList::GameUpdate(int right, int left, int dicision)
-{
-	if ((dicision == 1) && !createGameFlag && !gameReady)
-	{
-		gameReady = true;															// ゲームの準備画面に入ったらフラッグを立てる
-		GetDrawScreenGraph(0, 0, 1920, 1080, drawGameReady[0]);						// 現在の画面をキャプチャする
-		GraphFilter(drawGameReady[0], DX_GRAPH_FILTER_GAUSS, 16, 1400);				// 現在の画面にガウスフィルタかけてぼかす
-		PlayMovieToGraph(p_folder_media->GetMovie(now_checkGame));					// 動画を再生する
-	}
-
-
-	// ゲーム起動の準備画面
-	if (gameReady)
-	{
-		static int doubleSelectWait = 0;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
-		doubleSelectWait++;
-
-
-		// 右ボタンを選択するコマンドを押した
-		if (right == 1)
-		{
-			gameReadyCheck = false;						// ゲームを起動しない方にカーソル
-		}
-
-
-		// 左ボタンを選択するコマンドを押した
-		if (left == 1)
-		{
-			gameReadyCheck = true;						// ゲームを起動する方にカーソル
-		}
-
-		if (dicision == 1 && doubleSelectWait >= 10)
-		{
-			if (!gameReadyCheck)		// 戻る選択
-			{
-				gameReady = false;													// ゲームの準備画面から戻る
-				doubleSelectWait = 0;													// ダブルクリック防止を初期化
-				PauseMovieToGraph(p_folder_media->GetMovie(now_checkGame));			// 動画を止める
-				SeekMovieToGraph(p_folder_media->GetMovie(now_checkGame), 0);		// 動画の再生位置を最初に戻す
-			}
-			else
-			{
-				createGameFlag = true;																				// ゲームの起動処理を始める
-				PauseMovieToGraph(p_folder_media->GetMovie(now_checkGame));											// 動画を止める
-				SeekMovieToGraph(p_folder_media->GetMovie(now_checkGame), 0);										// 動画の再生位置を最初に戻す
-				p_folder_game->Process(p_folder_name->GetPathName(), p_folder_name->GetFolderName(now_checkGame));	// ゲームの起動処理
-			}
-		}
-	}
-
-
-	// 一番右でないとき右のゲームの詳細へ移動する
-	if (right == 1 && now_checkGame != gameNum && !gameReady)
-	{
-		now_checkGame++;													// 今の確認してるゲームを次に遷移
-	}
-
-
-	// 一番左でないとき左のゲームの詳細へ移動する
-	if (left == 1 && now_checkGame != 0 && !gameReady)
-	{
-		now_checkGame--;													// 今の確認してるゲームを一つ前に遷移
-	}
-
-}
-
-
+// ゲーム選択画面のゲームに関する描画
 void GameList::DrawGameFileScroll()
 {
 	// ゲームの個数によってUIを変更
@@ -172,7 +104,7 @@ void GameList::DrawGameFileScroll()
 }
 
 
-// オプション画面
+// オプション画面の描画
 void GameList::DrawOption()
 {
 	DrawGraph(1400, 10, drawLauncherEnd[0], false);				// 電源ボタン
@@ -254,37 +186,64 @@ void GameList::DrawOption()
 }
 
 
-// ランチャーの終了
-void GameList::LauncherEnd(int left, int right, int dicision)
+// 操作に関する管理
+void GameList::KeyProcess()
 {
-	if (endFlag)
+	for (int i = 0; i != PadData::GetPadNum(); ++i)
 	{
-		// 上の文字のNOとYESの切り替え
-		if (left == 1)
+		if (!endFlag)
 		{
-			endComfirm = false;
+			// ゲーム選択の操作
+			if (!windowSizeMenuFlag && gameSelect)
+			{
+				GameUpdate(PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, true)
+					, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, false), PadData::Get(XINPUT_BUTTON_A, i));
+			}
+
+
+			OptionKeyProcess(PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, true)
+				, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, false)
+				, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_Y, i, true)
+				, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_Y, i, false), PadData::Get(XINPUT_BUTTON_A, i));
 		}
-		if (right == 1)
+		else
 		{
-			endComfirm = true;
+			// ランチャーの終了の操作
+			LauncherEnd(PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, false)
+				, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, true), PadData::Get(XINPUT_BUTTON_A, i));
+
 		}
 
-		// エンターキーを押して選択状況に応じて
-		if (dicision == 1)
+	}
+
+	if (!endFlag)
+	{
+		// ゲーム選択の操作
+		if (!windowSizeMenuFlag && gameSelect)
 		{
-			if (!endComfirm)
-			{
-				launcher_end = true;
-			}
-			else
-			{
-				endFlag = false;
-			}
+			GameUpdate(KeyData::Get(KEY_INPUT_RIGHT), KeyData::Get(KEY_INPUT_LEFT), KeyData::Get(KEY_INPUT_Z));
 		}
+
+
+		OptionKeyProcess(KeyData::Get(KEY_INPUT_RIGHT), KeyData::Get(KEY_INPUT_LEFT), KeyData::Get(KEY_INPUT_UP), KeyData::Get(KEY_INPUT_DOWN), KeyData::Get(KEY_INPUT_Z));
+
+
+		if (KeyData::Get(KEY_INPUT_ESCAPE == 1))
+		{
+			endFlag = true;
+		}
+
+	}
+	else
+	{
+		// ランチャー終了の操作
+		LauncherEnd(KeyData::Get(KEY_INPUT_LEFT), KeyData::Get(KEY_INPUT_RIGHT), KeyData::Get(KEY_INPUT_Z));
+
 	}
 }
 
 
+// オプション画面の操作
 void GameList::OptionKeyProcess(int right, int left, int up, int down, int dicision)
 {
 	if (up == 1)
@@ -365,26 +324,139 @@ void GameList::OptionKeyProcess(int right, int left, int up, int down, int dicis
 	}
 }
 
+
+// ゲーム起動の操作に関する
+void GameList::GameUpdate(int right, int left, int dicision)
+{
+	// ゲームを起動していなくてゲームの準備画面にいないときに決定コマンドを押したら
+	if ((dicision == 1) && !createGameFlag && !gameReady)
+	{
+		gameReady = true;															// ゲームの準備画面に入ったらフラッグを立てる
+		GetDrawScreenGraph(0, 0, 1920, 1080, drawGameReady[0]);						// 現在の画面をキャプチャする
+		GraphFilter(drawGameReady[0], DX_GRAPH_FILTER_GAUSS, 16, 1400);				// 現在の画面にガウスフィルタかけてぼかす
+		PlayMovieToGraph(p_folder_media->GetMovie(now_checkGame));					// 動画を再生する
+	}
+
+
+	// ゲーム起動の準備画面
+	if (gameReady)
+	{
+		static int doubleSelectWait = 0;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
+		doubleSelectWait++;
+
+
+		// 右ボタンを選択するコマンドを押した
+		if (right == 1)
+		{
+			gameReadyCheck = false;						// ゲームを起動しない方にカーソル
+		}
+
+
+		// 左ボタンを選択するコマンドを押した
+		if (left == 1)
+		{
+			gameReadyCheck = true;						// ゲームを起動する方にカーソル
+		}
+
+
+		// 決定コマンドを押した
+		if (dicision == 1 && doubleSelectWait >= 10)
+		{
+			// 戻るを選択
+			if (!gameReadyCheck)
+			{
+				gameReady = false;													// ゲームの準備画面から戻る
+				doubleSelectWait = 0;												// ダブルクリック防止を初期化
+				PauseMovieToGraph(p_folder_media->GetMovie(now_checkGame));			// 動画を止める
+				SeekMovieToGraph(p_folder_media->GetMovie(now_checkGame), 0);		// 動画の再生位置を最初に戻す
+				gameReadyCheck = true;
+			}
+			// ゲーム起動を選択
+			else
+			{
+				createGameFlag = true;																				// ゲームの起動処理を始める
+				PauseMovieToGraph(p_folder_media->GetMovie(now_checkGame));											// 動画を止める
+				SeekMovieToGraph(p_folder_media->GetMovie(now_checkGame), 0);										// 動画の再生位置を最初に戻す
+				p_folder_game->Process(p_folder_name->GetPathName(), p_folder_name->GetFolderName(now_checkGame));	// ゲームの起動処理
+			}
+		}
+	}
+
+
+	// 一番右でないとき右のゲームの詳細へ移動する
+	if (right == 1 && now_checkGame != gameNum && !gameReady)
+	{
+		now_checkGame++;													// 今の確認してるゲームを次に遷移
+	}
+
+
+	// 一番左でないとき左のゲームの詳細へ移動する
+	if (left == 1 && now_checkGame != 0 && !gameReady)
+	{
+		now_checkGame--;													// 今の確認してるゲームを一つ前に遷移
+	}
+
+}
+
+
+// ランチャーの終了
+void GameList::LauncherEnd(int left, int right, int dicision)
+{
+	if (endFlag)
+	{
+		// 上の文字のNOとYESの切り替え
+		if (left == 1)
+		{
+			endComfirm = false;
+		}
+		if (right == 1)
+		{
+			endComfirm = true;
+		}
+
+		// エンターキーを押して選択状況に応じて
+		if (dicision == 1)
+		{
+			if (!endComfirm)
+			{
+				launcher_end = true;
+			}
+			else
+			{
+				endFlag = false;
+			}
+		}
+	}
+}
+
+
+
+// コンストラクタ
 GameList::GameList(int defaultXSize, int defaultYSize)
 {
-	default_xSize = defaultXSize;
-	default_ySize = defaultYSize;
+	// ポインターたち
+	p_folder_game = NULL;
+	p_folder_name = NULL;
+	p_folder_media = NULL;
 
-	numSize = 0;
-	xSize = default_xSize;
-	ySize = default_ySize;
+	p_folder_game = new FolderInGame();
+	p_folder_name = new FolderName();
+	p_folder_media = new FolderInMedia(p_folder_name->GetPathName(), p_folder_name->GetGameListName()
+		, p_folder_name->GetMovieListName(), p_folder_name->GetDrawListName()
+		, p_folder_name->GetTextListName(), p_folder_name->GetGameNum());
 
 
-	drawWindow[SizeWindow::Default] = LoadGraph("全画面.png");
-	drawWindow[SizeWindow::First] = LoadGraph("640x480.png");
-	drawWindow[SizeWindow::Second] = LoadGraph("768x576.png");
-	drawWindow[SizeWindow::Third] = LoadGraph("1024x768.png");
-	drawWindow[SizeWindow::Fourth] = LoadGraph("1280x720.png");
-	drawWindow[SizeWindow::Fifth] = LoadGraph("1366x768.png");
-	drawWindow[SizeWindow::Sixth] = LoadGraph("1920x1080.png");
-	drawWindow[SizeWindow::Seventh] = LoadGraph("2048x1536.png");
-	drawWindow[SizeWindow::Eighth] = LoadGraph("2560x1440.png");
-	drawWindow[SizeWindow::Ninth] = LoadGraph("3200x2400.png");
+	// 画像を保存する変数
+	drawWindow[SizeWindow::Default]	 = LoadGraph("全画面.png");
+	drawWindow[SizeWindow::First]	 = LoadGraph("640x480.png");
+	drawWindow[SizeWindow::Second]	 = LoadGraph("768x576.png");
+	drawWindow[SizeWindow::Third]	 = LoadGraph("1024x768.png");
+	drawWindow[SizeWindow::Fourth]	 = LoadGraph("1280x720.png");
+	drawWindow[SizeWindow::Fifth]	 = LoadGraph("1366x768.png");
+	drawWindow[SizeWindow::Sixth]	 = LoadGraph("1920x1080.png");
+	drawWindow[SizeWindow::Seventh]	 = LoadGraph("2048x1536.png");
+	drawWindow[SizeWindow::Eighth]	 = LoadGraph("2560x1440.png");
+	drawWindow[SizeWindow::Ninth]	 = LoadGraph("3200x2400.png");
 
 	drawSelectWin = LoadGraph("windowselect.png");
 
@@ -398,43 +470,24 @@ GameList::GameList(int defaultXSize, int defaultYSize)
 	drawLauncherEnd[2] = LoadGraph("endtrue.png");
 	drawLauncherEnd[3] = drawGameReady[3];
 
-	gameSelect = true;
 
-	windowSizeMenuFlag = false;
-
-	launcher_end = false;
-
-	optionTextFor = 0;
-
-	p_folder_game = NULL;
-	p_folder_name = NULL;
-	p_folder_media = NULL;
-
-	p_folder_game = new FolderInGame();
-
-	p_folder_name = new FolderName();
-
-	p_folder_media = new FolderInMedia(p_folder_name->GetPathName(), p_folder_name->GetGameListName()
-		, p_folder_name->GetMovieListName(), p_folder_name->GetDrawListName(), p_folder_name->GetTextListName(), p_folder_name->GetGameNum());
-
-	createGameFlag = false;
-
-	gameReadyCheck = true;
-
-	gameReady = false;
-
+	// ゲーム一覧に関する
 	gameNum = (p_folder_name->GetGameNum() - 1);		// 配列参照値に使うので事前に-1する
-
 	now_checkGame = 0;
-
 	selectSideNum = 0;
 
+
+	// ゲームの起動に関する
+	gameReady = false;
+	gameReadyCheck = true;
+	createGameFlag = false;
+
+
+	// ランチャー終了に関する
+	launcher_end = false;
 	endFlag = false;
-
 	endComfirm = false;
-
 	endCommandForcus = false;
-
 	if (gameNum == -1)
 	{
 		forceEnd = true;
@@ -443,6 +496,17 @@ GameList::GameList(int defaultXSize, int defaultYSize)
 	{
 		forceEnd = false;
 	}
+
+
+	// ウィンドウサイズ変更に関する
+	default_xSize = defaultXSize;
+	default_ySize = defaultYSize;
+	numSize = 0;
+	xSize = default_xSize;
+	ySize = default_ySize;
+	gameSelect = true;
+	windowSizeMenuFlag = false;
+	optionTextFor = 0;	
 }
 
 
@@ -558,62 +622,6 @@ void GameList::Process()
 		{
 			KeyProcess();
 		}
-	}
-}
-
-
-void GameList::KeyProcess()
-{
-	for (int i = 0; i != PadData::GetPadNum(); ++i)
-	{
-		if (!endFlag)
-		{
-			// ゲーム選択の操作
-			if (!windowSizeMenuFlag && gameSelect)
-			{
-				GameUpdate(PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, true)
-					, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, false), PadData::Get(XINPUT_BUTTON_A, i));
-			}
-
-
-			OptionKeyProcess(PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, true)
-				, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, false)
-				, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_Y, i, true)
-				, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_Y, i, false), PadData::Get(XINPUT_BUTTON_A, i));
-		}
-		else
-		{
-			// ランチャーの終了の操作
-			LauncherEnd(PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, false)
-				, PadData::GetStickCheck(ps::XINPUT_LEFT_THUMB_X, i, true), PadData::Get(XINPUT_BUTTON_A, i));
-
-		}
-		
-	}
-
-	if (!endFlag)
-	{
-		// ゲーム選択の操作
-		if (!windowSizeMenuFlag && gameSelect)
-		{
-			GameUpdate(KeyData::Get(KEY_INPUT_RIGHT), KeyData::Get(KEY_INPUT_LEFT), KeyData::Get(KEY_INPUT_Z));
-		}
-
-
-		OptionKeyProcess(KeyData::Get(KEY_INPUT_RIGHT), KeyData::Get(KEY_INPUT_LEFT), KeyData::Get(KEY_INPUT_UP), KeyData::Get(KEY_INPUT_DOWN), KeyData::Get(KEY_INPUT_Z));
-
-
-		if (KeyData::Get(KEY_INPUT_ESCAPE == 1))
-		{
-			endFlag = true;
-		}
-
-	}
-	else
-	{
-		// ランチャー終了の操作
-		LauncherEnd(KeyData::Get(KEY_INPUT_LEFT), KeyData::Get(KEY_INPUT_RIGHT), KeyData::Get(KEY_INPUT_Z));
-
 	}
 }
 
