@@ -9,16 +9,14 @@
 class FolderInMedia
 {
 private:
-	int g_SizeX;
-	int g_SizeY;
-
-	int nonedata;		// メディアのデータがなかった場合
-
-	std::vector<int> d_draw;		// 背景
-	std::vector<int> d_movie;			// 動画
-	std::vector<std::string> d_text;	// テキスト(処理がめんどくさいため後で)
+	// ファイルの中身に関する
+	std::vector<int> v_draw;			// 画像
+	std::vector<int> v_movie;			// 動画
+	std::vector<std::string> v_text;	// テキスト
+	int noneData;						// メディアのデータがなかった場合
 
 	std::string ReadText(std::string textname);		// テキストデータを読み込む
+
 
 public:
 	FolderInMedia(std::string pathname, std::vector<std::string> gamename, std::vector<std::string> moviename
@@ -27,7 +25,7 @@ public:
 
 
 	// ゲッター
-	int GetMovie(int listnum);
-	int GetDraw(int listnum);
-	std::string GetText(int listnum);
+	const int GetMovie(const int listnum) const;			// 動画
+	const int GetDraw(const int listnum) const;				// 画像
+	const std::string GetText(const int listnum) const;		// テキスト
 };

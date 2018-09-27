@@ -22,8 +22,7 @@ string FolderInMedia::ReadText(string textname)
 	else
 	{
 		getline(L_File, L_Line);
-			
-		// 半角だった場合
+		
 		tempIn = L_Line.substr(0, L_Line.size());
 		textdata = tempIn.c_str();
 	}
@@ -35,7 +34,12 @@ string FolderInMedia::ReadText(string textname)
 
 FolderInMedia::FolderInMedia(string pathname, vector<string> gamename, vector<string> moviename, vector<string> drawname, vector<string> textname, int gamenum)
 {
-	nonedata = LoadGraph("nonedata.png");
+	// vectorの一応初期化
+	v_draw.clear();
+	v_movie.clear();
+	v_text.clear();
+
+	noneData = LoadGraph("nonedata.png");
 
 
 	string completePath = "";
@@ -62,52 +66,52 @@ FolderInMedia::FolderInMedia(string pathname, vector<string> gamename, vector<st
 
 		// 動画の読み込み
 		tempPath.operator+= (moviename[i]);
-		d_movie.push_back(LoadGraph(tempPath.c_str()));
+		v_movie.push_back(LoadGraph(tempPath.c_str()));
 		// 動画がなかった場合nonedataを入れる
-		if (d_movie[i] == -1)
+		if (v_movie[i] == -1)
 		{
-			d_movie[i] = nonedata;
+			v_movie[i] = noneData;
 		}
 
 
 		// 画像の読み込み
 		tempPath = completePath;
 		tempPath.operator+= (drawname[i]);
-		d_draw.push_back(LoadGraph(tempPath.c_str()));
+		v_draw.push_back(LoadGraph(tempPath.c_str()));
 		// データがなかった場合そこにnonedataを入れる
-		if (d_draw[i] == -1)
+		if (v_draw[i] == -1)
 		{
-			d_draw[i] = nonedata;
+			v_draw[i] = noneData;
 		}
 
 
 		// テキストデータの読み込み
 		tempPath = completePath;
 		tempPath.operator+= (textname[i]);
-		d_text.push_back(ReadText(tempPath));
+		v_text.push_back(ReadText(tempPath));
 	}
 }
 
 FolderInMedia::~FolderInMedia()
 {
-	VECTOR_RELEASE(d_draw);
-	VECTOR_RELEASE(d_movie);
-	VECTOR_RELEASE(d_text);
+	VECTOR_RELEASE(v_draw);
+	VECTOR_RELEASE(v_movie);
+	VECTOR_RELEASE(v_text);
 
-	GRAPH_RELEASE(nonedata);
+	GRAPHIC_RELEASE(noneData);
 }
 
-int FolderInMedia::GetMovie(int listnum)
+const int FolderInMedia::GetMovie(const int listnum) const
 {
-	return d_movie[listnum];
+	return v_movie[listnum];
 }
 
-int FolderInMedia::GetDraw(int listnum)
+const int FolderInMedia::GetDraw(const int listnum) const
 {
-	return d_draw[listnum];
+	return v_draw[listnum];
 }
 
-string FolderInMedia::GetText(int listnum)
+const string FolderInMedia::GetText(const int listnum) const
 {
-	return d_text[listnum];
+	return v_text[listnum];
 }

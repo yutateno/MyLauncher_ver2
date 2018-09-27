@@ -2,24 +2,32 @@
 
 void FolderInGame::Process(std::string createPath, std::string folderName)
 {
-	bResult = TRUE;
+	result = TRUE;		// ゲームの起動を始めた合図
+
 
 	PROCESS_INFORMATION pInfo = {};	// プロセス軌道のためのもの
 
-	STARTUPINFO sInfo = {};			// 初期プロセス起動のためのもの(こっちだけローカルじゃなくていいかも)
 
-	//STARTUPINFO 構造体の内容を取得
+	STARTUPINFO sInfo = {};			// 初期プロセス起動のためのもの
+
+
 	ZeroMemory(&sInfo, sizeof(sInfo));		// 構造体全部初期化する
 	sInfo.cb = sizeof(sInfo);
+	ZeroMemory(&pInfo, sizeof(pInfo));
+
 
 	GetStartupInfo(&sInfo);					// スタートアップ情報を得る
 
-	// 見えない状態で起動させる
+
+	// ランチャーが見えない状態で起動させる
 	sInfo.dwFlags = STARTF_USESHOWWINDOW;
 	sInfo.wShowWindow = SW_HIDE;
 
-	gamePath = "";
-	direPath = "";
+
+	// ディレクトリ位置を調べる用変数
+	std::string gamePath = "";				// ゲームexeファイル
+	std::string direPath = "";				// ゲームファイル
+
 
 	gamePath.operator+= (createPath);
 	gamePath.operator+= (folderName);
@@ -28,9 +36,12 @@ void FolderInGame::Process(std::string createPath, std::string folderName)
 	gamePath.operator+= (folderName);
 	gamePath.operator+= (".exe");
 
-	SetWindowMinimizeFlag(TRUE);	// 最小化にする
 
-	bResult = CreateProcess(
+	SetWindowMinimizeFlag(TRUE);	// ランチャーを最小化にする
+
+
+	// ゲームを起動
+	result = CreateProcess(
 		NULL,
 		(LPSTR)gamePath.c_str(),		// ゲームを指定
 		NULL,
@@ -43,15 +54,17 @@ void FolderInGame::Process(std::string createPath, std::string folderName)
 		&pInfo
 	);
 
-	CloseHandle(pInfo.hThread);
-	WaitForSingleObject(pInfo.hProcess, INFINITE);
-	SetWindowMinimizeFlag(FALSE);		// 最小化を解除
-	CloseHandle(pInfo.hProcess);
-	gamePath = "";
-	bResult = FALSE;
+
+	WaitForSingleObject(pInfo.hProcess, INFINITE);		// 終了するまで待機
+	SetWindowMinimizeFlag(FALSE);						// 最小化を解除
+	CloseHandle(pInfo.hProcess);						// 解放
+	CloseHandle(pInfo.hThread);							// 解放
+
+
+	result = FALSE;										// ランチャーへの合図
 }
 
 bool FolderInGame::GetbResult()
 {
-	return bResult;
+	return result;
 }

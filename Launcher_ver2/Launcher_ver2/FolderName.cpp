@@ -2,12 +2,16 @@
 
 using namespace std;
 
-namespace pb = projectbase;
 
-
+// ファイルの中身探索
 string FolderName::SearchMediaFile(string gamePath, string gamefilename, string extension)
 {
 	string media_filename = "";		// 仮置き引数
+
+
+	WIN32_FIND_DATA findFileData;
+	ZeroMemory(&findFileData, sizeof(WIN32_FIND_DATA));		// 初期化
+
 
 	// 拡張子を持つファイルの名前を調べる
 	gamePath.operator+= (gamefilename);
@@ -17,50 +21,30 @@ string FolderName::SearchMediaFile(string gamePath, string gamefilename, string 
 	gamePath.operator+= ("*.");
 	gamePath.operator+= (extension);
 
-	hFind = FindFirstFile(gamePath.c_str(), &FindFileData);		// ファイルを調べる
+
+	HANDLE hFind = FindFirstFile(gamePath.c_str(), &findFileData);		// ファイルを調べる
 	if (hFind != INVALID_HANDLE_VALUE)		// 存在しなかったらやめる
 	{
-		do {
-			// FindFileData.cFileNameがファイル名
-			media_filename = FindFileData.cFileName;
-		} while (FindNextFile(hFind, &FindFileData));	// 存在し続けるだけ続ける
-
-		FindClose(hFind);
+		// FindFileData.cFileNameがファイル名
+		media_filename = findFileData.cFileName;
 	}
+	FindClose(hFind);
 
 	return media_filename;		// 調べたい拡張子を持つファイルの名前を返す
 }
 
 
-void FolderName::SearchDrawFile(string gamePath, string gamefilename, string extension)
-{
-	//// 拡張子を持つファイルの名前を調べる
-	//gamePath.operator+= (gamefilename);
-	//gamePath.operator+= ("\\");
-	//gamePath.operator+= ("launcher");
-	//gamePath.operator+= ("\\");
-	//gamePath.operator+= ("*.");
-	//gamePath.operator+= (extension);
-
-	//hFind = FindFirstFile(gamePath.c_str(), &FindFileData);
-	//if (hFind != INVALID_HANDLE_VALUE)
-	//{
-	//	do {
-	//		drawname.push_back(FindFileData.cFileName);
-	//	} while (FindNextFile(hFind, &FindFileData));
-
-	//	FindClose(hFind);
-	//}
-}
-
-
+// ゲームファイル探索
 void FolderName::SearchGameFile(string gamePath)
 {
-	fileCount = 0;		// 確認できたファイルの個数を調べる
+	int fileCount = 0;		// 確認できたファイルの個数を調べる
+
+	WIN32_FIND_DATA findFileData;
+	ZeroMemory(&findFileData, sizeof(WIN32_FIND_DATA));
 
 	gamePath.operator+= ("*.");		// フォルダを調べる
 
-	hFind = FindFirstFile(gamePath.c_str(), &FindFileData);
+	HANDLE hFind = FindFirstFile(gamePath.c_str(), &findFileData);
 	if (hFind != INVALID_HANDLE_VALUE)
 	{
 		do {
@@ -68,20 +52,28 @@ void FolderName::SearchGameFile(string gamePath)
 			// FindFileData.cFileNameがファイル名
 			if (fileCount >= 3)		// [.][..]を避けるため
 			{
-				foldername.push_back(FindFileData.cFileName);
+				v_folderName.push_back(findFileData.cFileName);
 			}
-		} while (FindNextFile(hFind, &FindFileData));
-
-		FindClose(hFind);
+		} while (FindNextFile(hFind, &findFileData));
 	}
+	FindClose(hFind);
 }
 
 
+// コンストラクタ
 FolderName::FolderName()
 {
+	// vectorの中身を一応初期化
+	v_drawName.clear();
+	v_folderName.clear();
+	v_movieName.clear();
+	v_textName.clear();
+
+
 	GetModuleFileName(NULL, Path, MAX_PATH);	// この実行ファイルの完全パスを取得
 
 	_splitpath(Path, drive, dir, fname, ext);	// パス名を構成要素に分解する
+
 
 	// 必要なものをいくつか結合していく
 	gamePath = "";
@@ -92,79 +84,68 @@ FolderName::FolderName()
 	gamePath.operator+= ("game");
 	gamePath.operator+= ("\\");
 
-	SearchGameFile(gamePath);
 
-	gamenum = foldername.size();
+	SearchGameFile(gamePath);				// ゲームファイルを調べる
 
-	tempPath = "";
 
-	tempPath.operator+= (drive);
-	tempPath.operator+= (dir);
-	tempPath.operator+= ("\\");
-	tempPath.operator+= ("game");
-	tempPath.operator+= ("\\");
-
-	createPath = tempPath;
-
-	for (int i = 0; i != gamenum; ++i)
+	for (int i = 0; i != static_cast<int>(v_folderName.size()); ++i)
 	{
 		// 動画のファイル名を保存
-		moviename.push_back(SearchMediaFile(gamePath, foldername[i], "mp4"));	// mp4以外だと何があるかわかんないからとりあえずこれだけ
+		v_movieName.push_back(SearchMediaFile(gamePath, v_folderName[i], "mp4"));
 
 		// 画像のファイル名を保存
-		drawname.push_back(SearchMediaFile(gamePath, foldername[i], "png"));
+		v_drawName.push_back(SearchMediaFile(gamePath, v_folderName[i], "png"));
 
 		// テキストデータのファイル名を保存
-		textname.push_back(SearchMediaFile(gamePath, foldername[i], "txt"));
+		v_textName.push_back(SearchMediaFile(gamePath, v_folderName[i], "txt"));
 	}
 }
 
 
+// デストラクタ
 FolderName::~FolderName()
 {
-	VECTOR_RELEASE(foldername);
-	VECTOR_RELEASE(moviename);
-	VECTOR_RELEASE(drawname);
-	VECTOR_RELEASE(textname);
+	VECTOR_RELEASE(v_folderName);
+	VECTOR_RELEASE(v_movieName);
+	VECTOR_RELEASE(v_drawName);
+	VECTOR_RELEASE(v_textName);
 }
 
 
-int FolderName::GetGameNum()
+
+const int FolderName::GetGameNum() const
 {
-	return gamenum;
+	return static_cast<int>(v_folderName.size());
+}
+
+const string FolderName::GetPathName() const
+{
+	return gamePath;
+}
+
+const string FolderName::GetFolderName(const int catch_number) const
+{
+	return v_folderName[catch_number];
+}
+
+const vector<string> FolderName::GetGameListName() const
+{
+	return v_folderName;
+}
+
+const vector<string> FolderName::GetMovieListName() const
+{
+	return v_movieName;
 }
 
 
-string FolderName::GetPathName()
+const vector<string> FolderName::GetDrawListName() const
 {
-	return createPath;
+	return v_drawName;
 }
 
 
-string FolderName::GetFolderName(int catch_number)
+const vector<string> FolderName::GetTextListName() const
 {
-	return foldername[catch_number];
-}
-
-vector<string> FolderName::GetGameListName()
-{
-	return foldername;
-}
-
-
-vector<string> FolderName::GetMovieListName()
-{
-	return moviename;
-}
-
-
-vector<string> FolderName::GetDrawListName()
-{
-	return drawname;
-}
-
-
-vector<string> FolderName::GetTextListName()
-{
-	return textname;
+	return v_textName;
 }

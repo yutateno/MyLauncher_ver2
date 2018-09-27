@@ -12,14 +12,15 @@ void GameList::GameUpdate(int right, int left, int dicision)
 		gameReady = true;															// ゲームの準備画面に入ったらフラッグを立てる
 		GetDrawScreenGraph(0, 0, 1920, 1080, drawGameReady[0]);						// 現在の画面をキャプチャする
 		GraphFilter(drawGameReady[0], DX_GRAPH_FILTER_GAUSS, 16, 1400);				// 現在の画面にガウスフィルタかけてぼかす
-		PlayMovieToGraph(p_folder_media->GetMovie(now_checkgame));					// 動画を再生する
+		PlayMovieToGraph(p_folder_media->GetMovie(now_checkGame));					// 動画を再生する
 	}
 
 
 	// ゲーム起動の準備画面
 	if (gameReady)
 	{
-		doubleSelectWait++;									// ダブルクリックを防止
+		static int doubleSelectWait = 0;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
+		doubleSelectWait++;
 
 
 		// 右ボタンを選択するコマンドを押した
@@ -41,31 +42,31 @@ void GameList::GameUpdate(int right, int left, int dicision)
 			{
 				gameReady = false;													// ゲームの準備画面から戻る
 				doubleSelectWait = 0;													// ダブルクリック防止を初期化
-				PauseMovieToGraph(p_folder_media->GetMovie(now_checkgame));			// 動画を止める
-				SeekMovieToGraph(p_folder_media->GetMovie(now_checkgame), 0);		// 動画の再生位置を最初に戻す
+				PauseMovieToGraph(p_folder_media->GetMovie(now_checkGame));			// 動画を止める
+				SeekMovieToGraph(p_folder_media->GetMovie(now_checkGame), 0);		// 動画の再生位置を最初に戻す
 			}
 			else
 			{
 				createGameFlag = true;																				// ゲームの起動処理を始める
-				PauseMovieToGraph(p_folder_media->GetMovie(now_checkgame));											// 動画を止める
-				SeekMovieToGraph(p_folder_media->GetMovie(now_checkgame), 0);										// 動画の再生位置を最初に戻す
-				p_folder_game->Process(p_folder_name->GetPathName(), p_folder_name->GetFolderName(now_checkgame));	// ゲームの起動処理
+				PauseMovieToGraph(p_folder_media->GetMovie(now_checkGame));											// 動画を止める
+				SeekMovieToGraph(p_folder_media->GetMovie(now_checkGame), 0);										// 動画の再生位置を最初に戻す
+				p_folder_game->Process(p_folder_name->GetPathName(), p_folder_name->GetFolderName(now_checkGame));	// ゲームの起動処理
 			}
 		}
 	}
 
 
 	// 一番右でないとき右のゲームの詳細へ移動する
-	if (right == 1 && now_checkgame != gamenum && !gameReady)
+	if (right == 1 && now_checkGame != gameNum && !gameReady)
 	{
-		now_checkgame++;													// 今の確認してるゲームを次に遷移
+		now_checkGame++;													// 今の確認してるゲームを次に遷移
 	}
 
 
 	// 一番左でないとき左のゲームの詳細へ移動する
-	if (left == 1 && now_checkgame != 0 && !gameReady)
+	if (left == 1 && now_checkGame != 0 && !gameReady)
 	{
-		now_checkgame--;													// 今の確認してるゲームを一つ前に遷移
+		now_checkGame--;													// 今の確認してるゲームを一つ前に遷移
 	}
 
 }
@@ -74,23 +75,23 @@ void GameList::GameUpdate(int right, int left, int dicision)
 void GameList::DrawGameFileScroll()
 {
 	// ゲームの個数によってUIを変更
-	if (gamenum >= 3)			// 4個以上
+	if (gameNum >= 3)			// 4個以上
 	{
-		selectSideNum = now_checkgame / 3;			// 今何列目か確認
+		selectSideNum = now_checkGame / 3;			// 今何列目か確認
 		
 
 		DrawExtendGraph(192, 288, 576, 768, p_folder_media->GetDraw(3 * selectSideNum), false);					// 左
 
 
 		// 真ん中に並べるゲームがあるか確認
-		if (gamenum >= 3 * selectSideNum + 1)
+		if (gameNum >= 3 * selectSideNum + 1)
 		{
 			DrawExtendGraph(768, 288, 1152, 768, p_folder_media->GetDraw(3 * selectSideNum + 1), false);		// 真ん中
 		}
 
 
 		// 右に並べるゲームがあるか確認
-		if (gamenum >= 3 * selectSideNum + 2)
+		if (gameNum >= 3 * selectSideNum + 2)
 		{
 			DrawExtendGraph(1344, 288, 1728, 768, p_folder_media->GetDraw(3 * selectSideNum + 2), false);		// 右
 		}
@@ -102,7 +103,7 @@ void GameList::DrawGameFileScroll()
 			DrawExtendGraph(1872, 288, 2256, 768, p_folder_media->GetDraw(3 * selectSideNum + 3), false);		// 右端に4つ目のゲームをチラ見セする
 		}
 		// 最後の列の時
-		else if (scrollNum == selectSideNum)
+		else if (selectSideNum == gameNum / 3)
 		{
 			DrawExtendGraph(-336, 288, 48, 768, p_folder_media->GetDraw(3 * selectSideNum - 1), false);			// 左端に一つ前の列の最後のゲームをチラ見セする
 		}
@@ -117,11 +118,11 @@ void GameList::DrawGameFileScroll()
 		// ゲームにカーソルを当てている
 		if (gameSelect)
 		{
-			DrawBox(182 + (now_checkgame - selectSideNum * 3) * 576, 288, 586 + (now_checkgame - selectSideNum * 3) * 576, 768, 255, false);		// フォーカスを分かりやすいようにボックスで囲む
+			DrawBox(182 + (now_checkGame - selectSideNum * 3) * 576, 288, 586 + (now_checkGame - selectSideNum * 3) * 576, 768, 255, false);		// フォーカスを分かりやすいようにボックスで囲む
 		}
 
 	}
-	else if (gamenum == 2)		// 3個以上
+	else if (gameNum == 2)		// 3個以上
 	{
 		DrawExtendGraph(192,	288,	576,	768, p_folder_media->GetDraw(0), false);			// 左
 		DrawExtendGraph(768,	288,	1152,	768, p_folder_media->GetDraw(1), false);			// 真ん中
@@ -131,11 +132,11 @@ void GameList::DrawGameFileScroll()
 		// ゲームにカーソルを当てている
 		if (gameSelect)
 		{
-			DrawBox(182 + now_checkgame * 576, 288, 586 + now_checkgame * 576, 768, 255, false);			// フォーカスを当てて分かりやすいように
+			DrawBox(182 + now_checkGame * 576, 288, 586 + now_checkGame * 576, 768, 255, false);			// フォーカスを当てて分かりやすいように
 		}
 
 	}
-	else if (gamenum == 1)		// 2個以上
+	else if (gameNum == 1)		// 2個以上
 	{
 		DrawExtendGraph(384,	288,	768,	768, p_folder_media->GetDraw(0), false);				// 左
 		DrawExtendGraph(1152,	288,	1536,	768, p_folder_media->GetDraw(1), false);				// 真ん中
@@ -144,11 +145,11 @@ void GameList::DrawGameFileScroll()
 		// ゲームにカーソルを当てている
 		if (gameSelect)
 		{
-			DrawBox(374 + now_checkgame * 768, 288, 778 + now_checkgame * 768, 768, 255, false);			// フォーカスを当ててやる
+			DrawBox(374 + now_checkGame * 768, 288, 778 + now_checkGame * 768, 768, 255, false);			// フォーカスを当ててやる
 		}
 
 	}
-	else if (gamenum == 0)		// 1個
+	else if (gameNum == 0)		// 1個
 	{
 		DrawExtendGraph(768, 288, 1152, 768, p_folder_media->GetDraw(0), false);			// ゲーム
 
@@ -166,7 +167,7 @@ void GameList::DrawGameFileScroll()
 	{
 		DrawLine(i, 910, i, 958, GetColor(255, 255, 255), true);		// 線を表示しまくる演出
 	}	
-	DrawFormatString(384, 910, GetColor(255, 0, 0), "%s", p_folder_media->GetText(now_checkgame).c_str());		// テキスト
+	DrawFormatString(384, 910, GetColor(255, 0, 0), "%s", p_folder_media->GetText(now_checkGame).c_str());		// テキスト
 
 }
 
@@ -176,6 +177,7 @@ void GameList::DrawOption()
 {
 	DrawGraph(1400, 10, drawLauncherEnd[0], false);				// 電源ボタン
 
+	static int optionPerformerCount = 0;		// ウィンドウサイズオプションの演出用変数
 
 	// ウィンドウ変更メニューのフラッグが立っているとき
 	if (windowSizeMenuFlag)
@@ -190,19 +192,19 @@ void GameList::DrawOption()
 		// ウィンドウサイズを表示
 		for (optionTextFor = SizeWindow::Select::Default; optionTextFor <= SizeWindow::Select::Ninth; ++optionTextFor)
 		{
-			DrawGraph(1550, 10 + optionTextFor * (optionPerformerCount / 1), drawWindow[optionTextFor], false);				// ウィンドウサイズコマンド
+			DrawGraph(1550, 10 + optionTextFor * optionPerformerCount, drawWindow[optionTextFor], false);				// ウィンドウサイズコマンド
 
 
 			// 選択しているものが分かりやすいように決定コマンドの座標を移動
 			if (numSize == optionTextFor)
 			{
-				DrawGraph(1500, 10 + optionTextFor * (optionPerformerCount / 1), drawSelectWin, false);						// ウィンドウサイズを変える決定コマンド
+				DrawGraph(1500, 10 + optionTextFor * optionPerformerCount, drawSelectWin, false);						// ウィンドウサイズを変える決定コマンド
 			}
 
 		}
 
 
-		DrawGraph(1550, 10 + numSize * (optionPerformerCount / 1), drawWindow[numSize], false);						// 決定された画像を最前面にするため
+		DrawGraph(1550, 10 + numSize * optionPerformerCount, drawWindow[numSize], false);						// 決定された画像を最前面にするため
 	}
 	else
 	{
@@ -216,26 +218,26 @@ void GameList::DrawOption()
 		// ウィンドウサイズを表示
 		for (optionTextFor = SizeWindow::Select::Default; optionTextFor <= SizeWindow::Select::Ninth; ++optionTextFor)
 		{
-			DrawGraph(1550, 10 + optionTextFor * (optionPerformerCount / 1), drawWindow[optionTextFor], false);				// ウィンドウコマンド
+			DrawGraph(1550, 10 + optionTextFor * optionPerformerCount, drawWindow[optionTextFor], false);				// ウィンドウコマンド
 
 
 			// 選択しているものが分かりやすいように決定コマンドの座標を移動
 			if (numSize == optionTextFor)
 			{
-				DrawGraph(1500, 10 + optionTextFor * (optionPerformerCount / 1), drawSelectWin, false);					// ウィンドウサイズを変える決定コマンド
+				DrawGraph(1500, 10 + optionTextFor * optionPerformerCount, drawSelectWin, false);					// ウィンドウサイズを変える決定コマンド
 			}
 
 		}
 
 
-		DrawGraph(1550, 10 + numSize * (optionPerformerCount / 1), drawWindow[numSize], false);						// 決定された画像を最前面にするため
+		DrawGraph(1550, 10 + numSize * optionPerformerCount, drawWindow[numSize], false);						// 決定された画像を最前面にするため
 
 
 		// ゲームにカーソルが当たっていない
 		if (!gameSelect)
 		{
 			// カーソルが電源に当たっている
-			if (!endOrOption)
+			if (!endCommandForcus)
 			{
 				DrawBox(1400, 10, 1440, 50, 255, false);		// フォーカス
 			}
@@ -297,18 +299,18 @@ void GameList::OptionKeyProcess(int right, int left, int up, int down, int dicis
 	{
 		if (right == 1)
 		{
-			endOrOption = true;
+			endCommandForcus = true;
 		}
 		if (left == 1)
 		{
-			endOrOption = false;
+			endCommandForcus = false;
 		}
 	}
 
 	// 左コントロールとWキーでウィンドウ変更メニューを表示または非表示にさせる
 	if (dicision == 1 && !gameSelect)
 	{
-		if (!endOrOption)
+		if (!endCommandForcus)
 		{
 			endFlag = true;
 		}
@@ -323,6 +325,7 @@ void GameList::OptionKeyProcess(int right, int left, int up, int down, int dicis
 	if (windowSizeMenuFlag)
 	{
 		optionTextFor = 0;
+		static int doubleSelectWait = 0;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
 		doubleSelectWait++;
 		// 左ALTとテンキーでサイズを変更する準備
 		if (up == 1)
@@ -420,15 +423,9 @@ GameList::GameList(int defaultXSize, int defaultYSize)
 
 	gameReady = false;
 
-	doubleSelectWait = 0;
+	gameNum = (p_folder_name->GetGameNum() - 1);		// 配列参照値に使うので事前に-1する
 
-	gamenum = (p_folder_name->GetGameNum() - 1);		// 配列参照値に使うので事前に-1する
-
-	now_checkgame = 0;
-
-	optionPerformerCount = 0;
-
-	scrollNum = gamenum / 3;
+	now_checkGame = 0;
 
 	selectSideNum = 0;
 
@@ -436,7 +433,16 @@ GameList::GameList(int defaultXSize, int defaultYSize)
 
 	endComfirm = false;
 
-	endOrOption = false;
+	endCommandForcus = false;
+
+	if (gameNum == -1)
+	{
+		forceEnd = true;
+	}
+	else
+	{
+		forceEnd = false;
+	}
 }
 
 
@@ -448,93 +454,110 @@ GameList::~GameList()
 
 	for (int i = 0; i != 4; ++i)
 	{
-		GRAPH_RELEASE(drawLauncherEnd[i]);
+		GRAPHIC_RELEASE(drawLauncherEnd[i]);
 	}
 	for (int i = 0; i != 4; ++i)
 	{
-		GRAPH_RELEASE(drawGameReady[i]);
+		GRAPHIC_RELEASE(drawGameReady[i]);
 	}
-	GRAPH_RELEASE(drawSelectWin);
+	GRAPHIC_RELEASE(drawSelectWin);
 	for (int i = 0; i != 10; ++i)
 	{
-		GRAPH_RELEASE(drawWindow[i]);
+		GRAPHIC_RELEASE(drawWindow[i]);
 	}
 }
 
 
 void GameList::Draw()
 {
-	// ゲームを起動していないとき
-	if (!createGameFlag && !endFlag)
+	if (forceEnd)
 	{
-		if (gameReady)
+		DrawFormatString(500, 500, GetColor(0, 0, 0), "ゲームファイルが存在しません。数秒後強制終了します。\nDon't Game Folder. Force Quit An Application.");
+	}
+	else
+	{
+		// ゲームを起動していないとき
+		if (!createGameFlag && !endFlag)
 		{
-			DrawGraph(0, 0, drawGameReady[0], false);			// ガウスフィルターを施した画像
-			DrawExtendGraph(384, 96, 1536, 768, p_folder_media->GetMovie(now_checkgame), false);		// 動画
-			DrawFormatString(400, 48, 255, "%s", p_folder_name->GetGameListName()[now_checkgame].c_str());
-			DrawGraph(768, 864, drawGameReady[1], false);
-			DrawGraph(480, 960, drawGameReady[2], false);
-			DrawGraph(1056, 960, drawGameReady[3], false);
-			if (gameReadyCheck)
+			if (gameReady)
 			{
-				DrawBox(480, 960, 813, 1023, 255, false);
+				DrawGraph(0, 0, drawGameReady[0], false);			// ガウスフィルターを施した画像
+				DrawExtendGraph(384, 96, 1536, 768, p_folder_media->GetMovie(now_checkGame), false);		// 動画
+				DrawFormatString(400, 48, 255, "%s", p_folder_name->GetGameListName()[now_checkGame].c_str());
+				DrawGraph(768, 864, drawGameReady[1], false);
+				DrawGraph(480, 960, drawGameReady[2], false);
+				DrawGraph(1056, 960, drawGameReady[3], false);
+				if (gameReadyCheck)
+				{
+					DrawBox(480, 960, 813, 1023, 255, false);
+				}
+				else
+				{
+					DrawBox(1056, 960, 1389, 1023, 255, false);
+				}
 			}
 			else
 			{
-				DrawBox(1056, 960, 1389, 1023, 255, false);
+				DrawGameFileScroll();
+
+				DrawOption();			// ウィンドウオプション
 			}
 		}
-		else
-		{
-			DrawGameFileScroll();
 
-			DrawOption();			// ウィンドウオプション
+		if (endFlag)
+		{
+			DrawGraph(700, 520, drawLauncherEnd[1], false);
+			DrawGraph(500, 720, drawLauncherEnd[2], false);
+			DrawGraph(900, 720, drawLauncherEnd[3], false);
+			// 選択状況に応じて色を変える
+			if (!endComfirm)
+			{
+				DrawBox(500, 720, 833, 783, 255, false);
+			}
+			else
+			{
+				DrawBox(900, 720, 1233, 783, 255, false);
+			}
 		}
 	}
-
-	if (endFlag)
-	{
-		DrawGraph(700, 520, drawLauncherEnd[1], false);
-		DrawGraph(500, 720, drawLauncherEnd[2], false);
-		DrawGraph(900, 720, drawLauncherEnd[3], false);
-		// 選択状況に応じて色を変える
-		if (!endComfirm)
-		{
-			DrawBox(500, 720, 833, 783, 255, false);
-		}
-		else
-		{
-			DrawBox(900, 720, 1233, 783, 255, false);
-		}
-	}
-
 #ifdef DEBUG_PRINTFDX
-	printfDx("%d\n", endFlag);
+	printfDx("%d\n", forceEndCount);
 #endif // DEBUG_PRINTFDX
-
 }
 
 
 void GameList::Process()
 {
-	// ゲームが終了したら
-	if (createGameFlag && !p_folder_game->GetbResult())
+	if (forceEnd)
 	{
-		createGameFlag = false;
-		gameReady = false;
-		gameReadyCheck = false;
+		static int forceEndCount = 0;		// 強制終了の確認画面の表示時間
+		forceEndCount++;
+		if (forceEndCount >= 300)
+		{
+			launcher_end = true;
+		}
 	}
-
-	// 現在の動画の再生が終わったら
-	if (gameReady && !createGameFlag && GetMovieStateToGraph(p_folder_media->GetMovie(now_checkgame)) == 0)
+	else
 	{
-		SeekMovieToGraph(p_folder_media->GetMovie(now_checkgame), 0);			// 動画の再生位置を最初に戻す
-		PlayMovieToGraph(p_folder_media->GetMovie(now_checkgame));
-	}
+		// ゲームが終了したら
+		if (createGameFlag && !p_folder_game->GetbResult())
+		{
+			createGameFlag = false;
+			gameReady = false;
+			gameReadyCheck = false;
+		}
 
-	if (!createGameFlag)
-	{
-		KeyProcess();
+		// 現在の動画の再生が終わったら
+		if (gameReady && !createGameFlag && GetMovieStateToGraph(p_folder_media->GetMovie(now_checkGame)) == 0)
+		{
+			SeekMovieToGraph(p_folder_media->GetMovie(now_checkGame), 0);			// 動画の再生位置を最初に戻す
+			PlayMovieToGraph(p_folder_media->GetMovie(now_checkGame));
+		}
+
+		if (!createGameFlag)
+		{
+			KeyProcess();
+		}
 	}
 }
 

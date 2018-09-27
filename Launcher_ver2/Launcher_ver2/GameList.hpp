@@ -61,21 +61,20 @@ private:
 
 
 	// 画像を保存する変数
-	int drawWindow[10];		// ウィンドウサイズに関する画像
-	int drawSelectWin;		// ウィンドウサイズの決定に関する画像
-	int drawGameReady[4];	// ゲーム起動に関する画像
+	int drawWindow[10];			// ウィンドウサイズに関する画像
+	int drawSelectWin;			// ウィンドウサイズの決定に関する画像
+	int drawGameReady[4];		// ゲーム起動に関する画像
 	int drawLauncherEnd[4];		// ランチャーの終了に関する画像
 
 
 	// ゲーム一覧に関する
-	int gamenum;			// 遊べるゲームの数
-	int now_checkgame;		// 今見ているゲーム
-	int scrollNum;			// ゲームの列の数
+	int gameNum;			// 遊べるゲームの数
+	int now_checkGame;		// 今見ているゲーム
 	int selectSideNum;		// 今選択しているゲームの列
 
 
 	// 操作の補助
-	int doubleSelectWait;		// ダブルクリックをさせない(最大4つのコントローラーとキーボードの操作を同時に取得しているので二つ以上の媒体で同時に押したときに動作をさせないため)
+	//int doubleSelectWait;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
 	
 	
 	// ゲームの起動に関する
@@ -86,21 +85,21 @@ private:
 
 	// ランチャー終了に関する
 	bool launcher_end;			// ランチャーを終了させる
-	bool endFlag;				// エンドコマンドを入力されたかどうか
-	bool endComfirm;			// エンドの確認
-	bool endOrOption;			// ランチャー終了コマンドかオプションコマンドにカーソルを当てているか
+	bool endFlag;				// 終了コマンドを入力されたかどうか
+	bool endComfirm;			// 終了確認画面での終了確認
+	bool endCommandForcus;		// ランチャー終了コマンドかオプションコマンドにカーソルを当てているか
+	bool forceEnd;				// 強制終了させるかどうか
 
 
 	// ウィンドウサイズ変更に関する
-	int default_xSize;			// デフォルトウィンドウのXサイズ
-	int default_ySize;			// デフォルトウィンドウのYサイズ
-	int numSize;				// 今のサイズ
+	int default_xSize;			// あなたのディスプレイ標準ウィンドウのXサイズ
+	int default_ySize;			// あなたのディスプレイ標準ウィンドウのYサイズ
+	int numSize;				// 今の指定サイズ
 	int xSize;					// サイズ変更後のXサイズ
 	int ySize;					// サイズ変更後のYサイズ
 	bool gameSelect;			// ゲームを選択している(上のオプションではない)
 	bool windowSizeMenuFlag;	// ウィンドウサイズ変更メニューの表示フラッグ
 	int optionTextFor;			// ウィンドウサイズのforループ数値のためのもの
-	int optionPerformerCount;	// ウィンドウサイズオプションの演出用変数
 
 	
 
