@@ -86,6 +86,7 @@ private:
 	bool endComfirm;			// 終了確認画面での終了確認
 	bool endCommandForcus;		// ランチャー終了コマンドかオプションコマンドにカーソルを当てているか
 	bool forceEnd;				// 強制終了させるかどうか
+	int forceEndCount;		// 強制終了の確認画面の表示時間
 
 
 	// ウィンドウサイズ変更に関する
@@ -97,6 +98,11 @@ private:
 	bool gameSelect;			// ゲームを選択している(上のオプションではない)
 	bool windowSizeMenuFlag;	// ウィンドウサイズ変更メニューの表示フラッグ
 	int optionTextFor;			// ウィンドウサイズのforループ数値のためのもの
+	int optionPerformerCount;		// ウィンドウサイズオプションの演出用変数
+
+
+	// 操作に関する
+	int doubleSelectWait;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
 
 	
 

@@ -109,8 +109,6 @@ void GameList::DrawOption()
 {
 	DrawGraph(1400, 10, drawLauncherEnd[0], false);				// 電源ボタン
 
-	static int optionPerformerCount = 0;		// ウィンドウサイズオプションの演出用変数
-
 	// ウィンドウ変更メニューのフラッグが立っているとき
 	if (windowSizeMenuFlag)
 	{
@@ -284,7 +282,6 @@ void GameList::OptionKeyProcess(int right, int left, int up, int down, int dicis
 	if (windowSizeMenuFlag)
 	{
 		optionTextFor = 0;
-		static int doubleSelectWait = 0;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
 		doubleSelectWait++;
 		// 左ALTとテンキーでサイズを変更する準備
 		if (up == 1)
@@ -341,7 +338,6 @@ void GameList::GameUpdate(int right, int left, int dicision)
 	// ゲーム起動の準備画面
 	if (gameReady)
 	{
-		static int doubleSelectWait = 0;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
 		doubleSelectWait++;
 
 
@@ -374,7 +370,8 @@ void GameList::GameUpdate(int right, int left, int dicision)
 			// ゲーム起動を選択
 			else
 			{
-				createGameFlag = true;																				// ゲームの起動処理を始める
+				createGameFlag = true;
+				doubleSelectWait = 0;																				// ダブルクリック防止を初期化
 				PauseMovieToGraph(p_folder_media->GetMovie(now_checkGame));											// 動画を止める
 				SeekMovieToGraph(p_folder_media->GetMovie(now_checkGame), 0);										// 動画の再生位置を最初に戻す
 				p_folder_game->Process(p_folder_name->GetPathName(), p_folder_name->GetFolderName(now_checkGame));	// ゲームの起動処理
@@ -496,6 +493,7 @@ GameList::GameList(int defaultXSize, int defaultYSize)
 	{
 		forceEnd = false;
 	}
+	forceEndCount = 0;
 
 
 	// ウィンドウサイズ変更に関する
@@ -506,7 +504,12 @@ GameList::GameList(int defaultXSize, int defaultYSize)
 	ySize = default_ySize;
 	gameSelect = true;
 	windowSizeMenuFlag = false;
-	optionTextFor = 0;	
+	optionTextFor = 0;
+	optionPerformerCount = 0;
+
+
+	// 操作に関する
+	doubleSelectWait = 0;
 }
 
 
@@ -594,7 +597,6 @@ void GameList::Process()
 {
 	if (forceEnd)
 	{
-		static int forceEndCount = 0;		// 強制終了の確認画面の表示時間
 		forceEndCount++;
 		if (forceEndCount >= 300)
 		{
@@ -603,12 +605,16 @@ void GameList::Process()
 	}
 	else
 	{
+		if (!createGameFlag)
+		{
+			KeyProcess();
+		}
+
 		// ゲームが終了したら
 		if (createGameFlag && !p_folder_game->GetbResult())
 		{
 			createGameFlag = false;
 			gameReady = false;
-			gameReadyCheck = false;
 		}
 
 		// 現在の動画の再生が終わったら
@@ -616,11 +622,6 @@ void GameList::Process()
 		{
 			SeekMovieToGraph(p_folder_media->GetMovie(now_checkGame), 0);			// 動画の再生位置を最初に戻す
 			PlayMovieToGraph(p_folder_media->GetMovie(now_checkGame));
-		}
-
-		if (!createGameFlag)
-		{
-			KeyProcess();
 		}
 	}
 }
