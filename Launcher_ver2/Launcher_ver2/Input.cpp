@@ -268,9 +268,12 @@ MouseData::~MouseData()
 
 int MouseData::m_Mouse[3];
 int MouseData::MouseInput;
+int MouseData::mouseX;
+int MouseData::mouseY;
 
 void MouseData::Mouse_UpDate() {
 	MouseInput = GetMouseInput();    //マウスの押した状態取得
+	GetMousePoint(&mouseX, &mouseY);
 	for (int i = 0; i < 3; i++) {
 		if ((MouseInput & 1 << i) != 0) {
 			m_Mouse[i]++;   //押されていたらカウントアップ
@@ -283,6 +286,18 @@ void MouseData::Mouse_UpDate() {
 
 int MouseData::GetClick(int MouseCode) {
 	return m_Mouse[MouseCode];
+}
+
+int MouseData::GetMouseXY(bool xPoint)
+{
+	if (xPoint)
+	{
+		return MouseData::mouseX;
+	}
+	else
+	{
+		return MouseData::mouseY;
+	}
 }
 
 //////////////////////////////////////////////マウスホイール関連////////////////////////////////////////////////////

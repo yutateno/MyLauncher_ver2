@@ -78,6 +78,8 @@ class MouseData
 private:
 	static int m_Mouse[3];
 	static int MouseInput;
+	static int mouseX;
+	static int mouseY;
 
 public:
 	MouseData();
@@ -85,6 +87,7 @@ public:
 
 	static void Mouse_UpDate(); //マウスのクリックの状態を更新する
 	static int GetClick(int MouseCode); //マウスのクリックの状態を返す
+	static int GetMouseXY(bool xPoint);	// マウスの位置
 };
 
 
