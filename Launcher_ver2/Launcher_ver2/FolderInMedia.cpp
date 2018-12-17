@@ -38,7 +38,7 @@ FolderInMedia::FolderInMedia(string pathname, vector<string> gamename, vector<st
 	v_movie.clear();
 	v_text.clear();
 
-	noneData = LoadGraph("nonedata.png");
+	noneData = LoadGraph("media\\nonedata.png");
 
 
 	string completePath = "";

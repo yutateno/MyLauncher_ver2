@@ -444,27 +444,27 @@ GameList::GameList(int defaultXSize, int defaultYSize)
 
 
 	// 画像を保存する変数
-	drawWindow[SizeWindow::Default]	 = LoadGraph("全画面.png");
-	drawWindow[SizeWindow::First]	 = LoadGraph("640x480.png");
-	drawWindow[SizeWindow::Second]	 = LoadGraph("768x576.png");
-	drawWindow[SizeWindow::Third]	 = LoadGraph("1024x768.png");
-	drawWindow[SizeWindow::Fourth]	 = LoadGraph("1280x720.png");
-	drawWindow[SizeWindow::Fifth]	 = LoadGraph("1366x768.png");
-	drawWindow[SizeWindow::Sixth]	 = LoadGraph("1920x1080.png");
-	drawWindow[SizeWindow::Seventh]	 = LoadGraph("2048x1536.png");
-	drawWindow[SizeWindow::Eighth]	 = LoadGraph("2560x1440.png");
-	drawWindow[SizeWindow::Ninth]	 = LoadGraph("3200x2400.png");
+	drawWindow[SizeWindow::Default]	 = LoadGraph("media\\全画面.png");
+	drawWindow[SizeWindow::First]	 = LoadGraph("media\\640x480.png");
+	drawWindow[SizeWindow::Second]	 = LoadGraph("media\\768x576.png");
+	drawWindow[SizeWindow::Third]	 = LoadGraph("media\\1024x768.png");
+	drawWindow[SizeWindow::Fourth]	 = LoadGraph("media\\1280x720.png");
+	drawWindow[SizeWindow::Fifth]	 = LoadGraph("media\\1366x768.png");
+	drawWindow[SizeWindow::Sixth]	 = LoadGraph("media\\1920x1080.png");
+	drawWindow[SizeWindow::Seventh]	 = LoadGraph("media\\2048x1536.png");
+	drawWindow[SizeWindow::Eighth]	 = LoadGraph("media\\2560x1440.png");
+	drawWindow[SizeWindow::Ninth]	 = LoadGraph("media\\3200x2400.png");
 
-	drawSelectWin = LoadGraph("windowselect.png");
+	drawSelectWin = LoadGraph("media\\windowselect.png");
 
 	drawGameReady[0] = MakeScreen(1920, 1080);
-	drawGameReady[1] = LoadGraph("gamestart.png");
-	drawGameReady[2] = LoadGraph("start.png");
-	drawGameReady[3] = LoadGraph("back.png");
+	drawGameReady[1] = LoadGraph("media\\gamestart.png");
+	drawGameReady[2] = LoadGraph("media\\start.png");
+	drawGameReady[3] = LoadGraph("media\\back.png");
 
-	drawLauncherEnd[0] = LoadGraph("dengen.png");
-	drawLauncherEnd[1] = LoadGraph("終了確認.png");
-	drawLauncherEnd[2] = LoadGraph("endtrue.png");
+	drawLauncherEnd[0] = LoadGraph("media\\dengen.png");
+	drawLauncherEnd[1] = LoadGraph("media\\終了確認.png");
+	drawLauncherEnd[2] = LoadGraph("media\\endtrue.png");
 	drawLauncherEnd[3] = drawGameReady[3];
 
 
