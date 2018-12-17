@@ -85,9 +85,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	POINTER_RELEASE(game_list);
 
 
-	DxLib::InitGraph();
-	DxLib::InitSoundMem();
-	DxLib::DxLib_End();
+	InitGraph();
+	InitSoundMem();
+	DxLib_End();
 
 
 	return 0;

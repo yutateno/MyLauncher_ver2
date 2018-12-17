@@ -4,17 +4,24 @@
 class FolderInGame
 {
 private:
-	BOOL result;		// プロセスが起動したかどうか
+	// プロセスが起動したかどうか
+	BOOL result;		
 
 
 public:
-	FolderInGame() : result(FALSE) {}		// コンストラクタ
-	~FolderInGame() {}	// デストラクタ
+	// コンストラクタ
+	FolderInGame() : result(FALSE) {}		
+
+	// デストラクタ
+	~FolderInGame() {}	
 
 
-	void Process(std::string createPath, std::string folderName);		// メイン/ exeの階層までのパスを保存した引数とexeの名前を保存した引数
+	// メイン/ exeの階層までのパスを保存した引数とexeの名前を保存した引数
+	void Process(std::string createPath, std::string folderName);		
 
 
-	// ゲッター
-	bool GetbResult();		// 起動を確認
+	/// ゲッター
+
+	// 起動を確認
+	bool GetbResult();		
 };

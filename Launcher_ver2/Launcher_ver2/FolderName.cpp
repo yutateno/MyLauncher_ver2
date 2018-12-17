@@ -48,9 +48,8 @@ void FolderName::SearchGameFile(string gamePath)
 	if (hFind != INVALID_HANDLE_VALUE)
 	{
 		do {
-			++fileCount;
 			// FindFileData.cFileName‚ªƒtƒ@ƒCƒ‹–¼
-			if (fileCount >= 3)		// [.][..]‚ð”ð‚¯‚é‚½‚ß
+			if (++fileCount >= 3)		// [.][..]‚ð”ð‚¯‚é‚½‚ß
 			{
 				v_folderName.push_back(findFileData.cFileName);
 			}

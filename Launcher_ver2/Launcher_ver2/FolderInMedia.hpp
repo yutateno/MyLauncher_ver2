@@ -9,23 +9,42 @@
 class FolderInMedia
 {
 private:
-	// ファイルの中身に関する
-	std::vector<int> v_draw;			// 画像
-	std::vector<int> v_movie;			// 動画
-	std::vector<std::string> v_text;	// テキスト
-	int noneData;						// メディアのデータがなかった場合
+	/// ファイルの中身に関する----------------------
 
-	std::string ReadText(std::string textname);		// テキストデータを読み込む
+	// 画像
+	std::vector<int> v_draw;			
+
+	// 動画
+	std::vector<int> v_movie;			
+
+	// テキスト
+	std::vector<std::string> v_text;	
+
+	// メディアのデータがなかった場合
+	int noneData;						
+
+
+	// テキストデータを読み込む
+	std::string ReadText(std::string textname);		
 
 
 public:
+	// コンストラクタ
 	FolderInMedia(std::string pathname, std::vector<std::string> gamename, std::vector<std::string> moviename
-		, std::vector<std::string> drawname, std::vector<std::string> textname, int gamenum);	// コンストラクタ
-	~FolderInMedia();		// デストラクタ
+		, std::vector<std::string> drawname, std::vector<std::string> textname, int gamenum);	
+
+	// デストラクタ
+	~FolderInMedia();		
 
 
-	// ゲッター
-	const int GetMovie(const int listnum) const;			// 動画
-	const int GetDraw(const int listnum) const;				// 画像
-	const std::string GetText(const int listnum) const;		// テキスト
+	/// ゲッター------------------------------------------------
+
+	// 動画
+	const int GetMovie(const int listnum) const;			
+
+	// 画像
+	const int GetDraw(const int listnum) const;				
+
+	// テキスト
+	const std::string GetText(const int listnum) const;		
 };

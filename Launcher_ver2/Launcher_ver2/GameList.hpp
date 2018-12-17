@@ -7,13 +7,19 @@
 class GameList
 {
 private:
-	// ポインターたち
-	FolderName* p_folder_name;		// FolderNameの実態(ゲームを所持するフォルダの名前を持つ)
-	FolderInGame* p_folder_game;		// FolderInGameの実態(フォルダのゲームの起動に関する)
-	FolderInMedia* p_folder_media;	// FolderInMediaの実態(フォルダのゲームのメディアに関する)
+	/// ポインターたち------------------------------------------
+
+	// FolderNameの実態(ゲームを所持するフォルダの名前を持つ)
+	FolderName* p_folder_name;		
+
+	// FolderInGameの実態(フォルダのゲームの起動に関する)
+	FolderInGame* p_folder_game;	
+
+	// FolderInMediaの実態(フォルダのゲームのメディアに関する)
+	FolderInMedia* p_folder_media;	
 
 
-	// 変えれるウィンドウのサイズ(XとY両方持つ奴欲しかった)(本当はenumの数値にX座標入れてfor回したかったけど出来ないから妥協)
+	// 変えれるウィンドウのサイズ
 	struct SizeWindow {
 		enum Select
 		{
@@ -61,65 +67,131 @@ private:
 	};
 
 
-	// 画像を保存する変数
-	int drawWindow[10];			// ウィンドウサイズに関する画像
-	int drawSelectWin;			// ウィンドウサイズの決定に関する画像
-	int drawGameReady[4];		// ゲーム起動に関する画像
-	int drawLauncherEnd[4];		// ランチャーの終了に関する画像
+	/// 画像を保存する変数--------------------------
+
+	// ウィンドウサイズに関する画像
+	int drawWindow[10];			
+
+	// ウィンドウサイズの決定に関する画像
+	int drawSelectWin;			
+
+	// ゲーム起動に関する画像
+	int drawGameReady[4];		
+
+	// ランチャーの終了に関する画像
+	int drawLauncherEnd[4];		
 
 
-	// ゲーム一覧に関する
-	int gameNum;			// 遊べるゲームの数
-	int now_checkGame;		// 今見ているゲーム
-	int selectSideNum;		// 今選択しているゲームの列
+	/// ゲーム一覧に関する-----------------
+
+	// 遊べるゲームの数
+	int gameNum;			
+
+	// 今見ているゲーム
+	int now_checkGame;		
+
+	// 今選択しているゲームの列
+	int selectSideNum;		
 	
 	
-	// ゲームの起動に関する
-	bool gameReady;			// ゲーム起動の確認
-	bool gameReadyCheck;	// ゲーム起動の選択
-	bool createGameFlag;	// ゲームを起動しているか
+	/// ゲームの起動に関する------------
+
+	// ゲーム起動の確認
+	bool gameReady;			
+
+	// ゲーム起動の選択
+	bool gameReadyCheck;	
+
+	// ゲームを起動しているか
+	bool createGameFlag;	
 
 
-	// ランチャー終了に関する
-	bool launcher_end;			// ランチャーを終了させる
-	bool endFlag;				// 終了コマンドを入力されたかどうか
-	bool endComfirm;			// 終了確認画面での終了確認
-	bool endCommandForcus;		// ランチャー終了コマンドかオプションコマンドにカーソルを当てているか
-	bool forceEnd;				// 強制終了させるかどうか
-	int forceEndCount;		// 強制終了の確認画面の表示時間
+	/// ランチャー終了に関する------------------------------------------------
+
+	// ランチャーを終了させる
+	bool launcher_end;			
+
+	// 終了コマンドを入力されたかどうか
+	bool endFlag;				
+
+	// 終了確認画面での終了確認
+	bool endComfirm;			
+
+	// ランチャー終了コマンドかオプションコマンドにカーソルを当てているか
+	bool endCommandForcus;		
+
+	// 強制終了させるかどうか
+	bool forceEnd;			
+
+	// 強制終了の確認画面の表示時間
+	int forceEndCount;		
 
 
-	// ウィンドウサイズ変更に関する
-	int default_xSize;			// あなたのディスプレイ標準ウィンドウのXサイズ
-	int default_ySize;			// あなたのディスプレイ標準ウィンドウのYサイズ
-	int numSize;				// 今の指定サイズ
-	int xSize;					// サイズ変更後のXサイズ
-	int ySize;					// サイズ変更後のYサイズ
-	bool gameSelect;			// ゲームを選択している(上のオプションではない)
-	bool windowSizeMenuFlag;	// ウィンドウサイズ変更メニューの表示フラッグ
-	int optionTextFor;			// ウィンドウサイズのforループ数値のためのもの
-	int optionPerformerCount;		// ウィンドウサイズオプションの演出用変数
+	/// ウィンドウサイズ変更に関する------------------------
+
+	// あなたのディスプレイ標準ウィンドウのXサイズ
+	int default_xSize;			
+
+	// あなたのディスプレイ標準ウィンドウのYサイズ
+	int default_ySize;			
+
+	// 今の指定サイズ
+	int numSize;				
+
+	// サイズ変更後のXサイズ
+	int xSize;					
+
+	// サイズ変更後のYサイズ
+	int ySize;					
+
+	// ゲームを選択している(上のオプションではない)
+	bool gameSelect;			
+
+	// ウィンドウサイズ変更メニューの表示フラッグ
+	bool windowSizeMenuFlag;	
+
+	// ウィンドウサイズのforループ数値のためのもの
+	int optionTextFor;			
+
+	// ウィンドウサイズオプションの演出用変数
+	int optionPerformerCount;
+	/// --------------------------------------------------	
 
 
-	// 操作に関する
-	int doubleSelectWait;		// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
+	/// 操作に関する-------------------------------------------------------
+
+	// ダブルクリックをさせない(複数のデバイスから同時に取得しているため)
+	int doubleSelectWait;		
 
 	
 
-	// 描画のプロセス
-	void DrawGameFileScroll();		// ゲーム起動に関する描画
-	void DrawOption();				// オプションに関する描画
+	/// 描画のプロセス------------------------
+
+	// ゲーム起動に関する描画
+	void DrawGameFileScroll();		
+
+	// オプションに関する描画
+	void DrawOption();				
 
 
-	// 操作のプロセス
-	void KeyProcess();																	// 入力
-	void OptionKeyProcess(int right, int left, int up, int down, int dicision);			// オプションの操作に関する
-	void GameUpdate(int right, int left, int dicision);									// ゲーム起動の操作に関する
-	void LauncherEnd(int left, int right, int dicision);								// ランチャー終了の操作に関する
+	/// 操作のプロセス---------------------------------------------------------------
+
+	// 入力
+	void KeyProcess();																	
+
+	// オプションの操作に関する
+	void OptionKeyProcess(int right, int left, int up, int down, int dicision);			
+
+	// ゲーム起動の操作に関する
+	void GameUpdate(int right, int left, int dicision);								
+
+	// ランチャー終了の操作に関する
+	void LauncherEnd(int left, int right, int dicision);
+
 
 public:
 	GameList(int defaultXSize, int defaultYSize);		// コンストラクタ
-	~GameList();	// デストラクタ
+	~GameList();										// デストラクタ
 
 
 	void Draw();		// 描画
